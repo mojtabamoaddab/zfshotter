@@ -16,7 +16,7 @@
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
-_MODULE_LOADER_DIR="$(cd "$(dirname "${BASH_SOURCES[0]}")" && pwd)"
+_MODULE_LOADER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODULES_DIR="$_MODULE_LOADER_DIR"
 
 
