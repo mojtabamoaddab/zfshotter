@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with ZFShoter. If not, see <http://www.gnu.org/licenses/>.
+# along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
 LOG_DATE_FORMAT="%Y-%m-%d %H:%M:%S"
