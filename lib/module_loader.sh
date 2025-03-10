@@ -16,6 +16,9 @@
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
+[ -n "$_LIB_MODULE_LOADER" ] && return || readonly _LIB_MODULE_LOADER=1
+
+
 _MODULE_LOADER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODULES_DIR="$_MODULE_LOADER_DIR"
 
