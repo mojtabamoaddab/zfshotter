@@ -20,25 +20,15 @@ load_module logging
 
 ZSHOTTER_SNAPSHOT_FORMAT="zshotter-%Y%m%d-%H%M%S"
 
-# zfshotter::take_snapshot <dataset-config> <snapshot-name>
+# zfshotter::take_snapshot <dataset> <snapshot-name> <options>
 zfshotter::take_snapshot() {
-    local dataset_config="$1"
+    local dataset="$1"
     local snapshot_name="$2"
-
-    local -A options
-
-    dataset_config::parse options "$1"
-
-    local dataset="${options["dataset"]}"
-
-    if ! dataset_config::boolean "${options["snapshot"]}" "yes"; then
-        logging::debug "Skip taking snapshot from $dataset (snapshot=${options["snapshot"]})"
-        return
-    fi
+    local -n __options="$3"
 
     local zfs_options=""
     local log_message="Taking snapshot from $dataset"
-    if boolean_option "${options["recursive"]}"; then
+    if boolean_option "${__options["recursive"]}"; then
         zfs_options+=" -r"
         log_message+=" (recursive)"
     fi
@@ -56,9 +46,22 @@ zfshotter::take_snapshot_from_file() {
     local -a datasets
     mapfile -t datasets < "$filepath"
 
-    local dataset_config
+    local dataset_config dataset
     for dataset_config in "${datasets[@]}"
     do
-        zfshotter::take_snapshot "$dataset_config" "$(date +"$snapshot_format")"
+        local -A options
+
+        dataset_config::parse options "$dataset_config"
+
+        dataset="${options["dataset"]}"
+
+        if ! dataset_config::boolean "${options["snapshot"]}" "yes"; then
+            logging::debug "Skip taking snapshot from $dataset (snapshot=${options["snapshot"]})"
+            continue
+        fi
+
+        zfshotter::take_snapshot "$dataset" "$(date +"$snapshot_format")" options
+
+        unset options
     done
 }
