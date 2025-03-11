@@ -32,14 +32,17 @@ load_module() {
         return 0
     fi
 
+    local module_file
+
     if [ -f "$MODULES_DIR/$module.sh" ]; then
-        source "$MODULES_DIR/$module.sh"
+        module_file="$MODULES_DIR/$module.sh"
     elif [ -d "$MODULES_DIR/$module" -a -f "$MODULES_DIR/$module/__module__.sh" ]; then
-        source "$MODULES_DIR/$module/__module__.sh"
+        module_file="$MODULES_DIR/$module/__module__.sh"
     else
         echo "Module not found: '$module'" >&2
         return 1
     fi
 
     __MODULES["$module"]="yes"
+    source "$module_file"
 }
