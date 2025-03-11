@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
+load_module dataset_config
 load_module logging
 
 
