@@ -48,7 +48,7 @@ zfshotter::take_snapshot() {
     zfs snapshot $zfs_options "${dataset}@${snapshot_name}"
 }
 
-# zfshotter::snapshot_from_file <filepath> <snapshot-format>
+# zfshotter::take_snapshot_from_file <filepath> <snapshot-format>
 zfshotter::take_snapshot_from_file() {
     local filepath="$1"
     local snapshot_format="${2:-$ZSHOTTER_SNAPSHOT_FORMAT}"
