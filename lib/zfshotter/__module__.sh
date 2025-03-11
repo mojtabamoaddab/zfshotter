@@ -18,3 +18,4 @@
 _ZSHOTTER_MODULE_NAME="zshotter"
 
 load_module "$_ZSHOTTER_MODULE_NAME/snapshot"
+load_module "$_ZSHOTTER_MODULE_NAME/prune"
