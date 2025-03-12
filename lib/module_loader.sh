@@ -28,21 +28,34 @@ declare -A __MODULES
 # load_module <module>
 load_module() {
     local module="$1"
-    if [ "${__MODULES["$module"]}" == "yes" ]; then
-        return 0
+
+    local absolute_module
+    if [ "${module:0:1}" == "/" ]; then
+        absolute_module="$module"
+    elif [[ "$module" =~ ^(\.|\.\.)(/|$) ]]; then
+        local caller_dir="$(cd "$(dirname "${BASH_SOURCE[1]}")" && pwd)"
+        absolute_module="$(realpath "$caller_dir/$module")"
+        unset caller_dir
+    else
+        absolute_module="$MODULES_DIR/$module"
     fi
+
 
     local module_file
 
-    if [ -f "$MODULES_DIR/$module.sh" ]; then
-        module_file="$MODULES_DIR/$module.sh"
-    elif [ -d "$MODULES_DIR/$module" -a -f "$MODULES_DIR/$module/__module__.sh" ]; then
-        module_file="$MODULES_DIR/$module/__module__.sh"
+    if [ -f "$absolute_module.sh" ]; then
+        module_file="$absolute_module.sh"
+    elif [ -d "$absolute_module" -a -f "$absolute_module/__module__.sh" ]; then
+        module_file="$absolute_module/__module__.sh"
     else
         echo "Module not found: '$module'" >&2
         return 1
     fi
 
-    __MODULES["$module"]="yes"
+
+    if [ "${__MODULES["$module_file"]}" == "yes" ]; then
+        return 0
+    fi
+    __MODULES["$module_file"]="yes"
     source "$module_file"
 }
