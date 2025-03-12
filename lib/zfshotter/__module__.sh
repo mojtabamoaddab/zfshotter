@@ -15,7 +15,5 @@
 # You should have received a copy of the GNU General Public License
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
-_ZSHOTTER_MODULE_NAME="zshotter"
-
-load_module "$_ZSHOTTER_MODULE_NAME/snapshot"
-load_module "$_ZSHOTTER_MODULE_NAME/prune"
+load_module ./snapshot
+load_module ./prune
