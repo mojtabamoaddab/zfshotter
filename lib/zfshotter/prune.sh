@@ -31,7 +31,7 @@ zfshotter::prune_snapshot() {
 # zfshotter::prune_snapshot_from_file <filepath> <prune-policy>
 zfshotter::prune_snapshot_from_file() {
     local filepath="$1"
-	local prune_policy="$2"
+    local prune_policy="$2"
 
     local -a datasets
     mapfile -t datasets < "$filepath"

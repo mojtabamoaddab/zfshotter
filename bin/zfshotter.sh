@@ -39,12 +39,12 @@ Options:
 "
 
 _short_help() {
-	echo "$_USAGE_LINE"
+    echo "$_USAGE_LINE"
     echo "Try '$0 --help' for more information"
 }
 
 _full_help() {
-	echo "$_HELP"
+    echo "$_HELP"
 }
 
 
