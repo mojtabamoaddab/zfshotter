@@ -24,6 +24,8 @@ ZFSHOTTER_CONFIG_DIR="$ZFSHOTTER_ROOT_DIR/config"
 ZFSHOTTER_JOBS_DIR="$ZFSHOTTER_CONFIG_DIR/jobs"
 ZFSHOTTER_DATASETS_DIR="$ZFSHOTTER_CONFIG_DIR/datasets"
 
+DEFAULT_DATASETS="default"
+DEFAULT_PRUNE_POLICY='keep_regex "^(?!zfshotter-)" | keep_n 25'
 
 # zfsshotter::load_job_config <job-name>
 config::load_job_config() {
@@ -34,7 +36,16 @@ config::load_job_config() {
         return 1
     fi
     logging::info "Loading job configuration for '$job_name' from '$job_path'."
+
+    unset DATASETS SNAPSHOT_DATASETS PRUNE_DATASETS REPLICATE_DATASETS PRUNE_POLICY
+
     source "$job_path"
+
+    : ${DATASETS:=$DEFAULT_DATASETS}
+    : ${SNAPSHOT_DATASETS:=$DATASETS}
+    : ${PRUNE_DATASETS:=$DATASETS}
+    : ${REPLICATE_DATASETS:=$DATASETS}
+    : ${PRUNE_POLICY:=$DEFAULT_PRUNE_POLICY}
 }
 
 # zfsshotter::datasets_path <datasets-name>
