@@ -16,20 +16,6 @@
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
-# zfshotter::prune_policy::destroy
-#
-# Destroys snapshots read from standard input (timestamp snapshot).
-zfshotter::prune_policy::destroy() {
-    local line
-    while IFS= read -r line
-    do
-        read timestamp snapshot <<< "$line"
-
-        zfs destroy "$snapshot"
-    done
-}
-
-
 # zfshotter::prune_policy::pipe <prune-policy>
 #
 # Executes a pipeline of prune policies from a given string

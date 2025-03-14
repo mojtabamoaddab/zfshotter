@@ -25,6 +25,19 @@ __snapshots() {
     zfs list -H -o creation,name -s creation -t snapshot "$1"
 }
 
+# zfshotter::destroy_snapshots
+#
+# Destroys snapshots read from standard input (timestamp snapshot).
+zfshotter::destroy_snapshots() {
+    local line timestamp snapshot
+    while IFS= read -r line
+    do
+        read timestamp snapshot <<< "$line"
+
+        zfs destroy "$snapshot"
+    done
+}
+
 # zfshotter::prune_snapshot <dataset> <prune-policy> <options>
 zfshotter::prune_snapshot() {
     local dataset="$1"
@@ -33,7 +46,7 @@ zfshotter::prune_snapshot() {
 
     __snapshots "$dataset" | \
         zfshotter::prune_policy::pipe "$prune_policy" | \
-        zfshotter::prune_policy::destroy
+        zfshotter::destroy_snapshots
 }
 
 # zfshotter::prune_snapshot_from_file <filepath> <prune-policy>
