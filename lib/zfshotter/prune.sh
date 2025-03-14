@@ -18,6 +18,12 @@
 load_module dataset_config
 load_module logging
 
+load_module ./prune_policy
+
+
+__snapshots() {
+    zfs list -H -o creation,name -s creation -t snapshot "$1"
+}
 
 # zfshotter::prune_snapshot <dataset> <prune-policy> <options>
 zfshotter::prune_snapshot() {
@@ -25,7 +31,9 @@ zfshotter::prune_snapshot() {
     local prune_policy="$2"
     local -n __options="$3"
 
-    # TODO: Prune snapshots for the specified dataset using the given policy.
+    __snapshots "$dataset" | \
+        zfshotter::prune_policy::pipe "$prune_policy" | \
+        zfshotter::prune_policy::destroy
 }
 
 # zfshotter::prune_snapshot_from_file <filepath> <prune-policy>
