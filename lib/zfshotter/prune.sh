@@ -22,7 +22,7 @@ load_module ./prune_policy
 
 
 __snapshots() {
-    zfs list -H -o creation,name -s creation -t snapshot "$1"
+    zfs list -H -p -o creation,name -s creation -t snapshot "$1"
 }
 
 # zfshotter::destroy_snapshots
