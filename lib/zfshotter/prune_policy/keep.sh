@@ -16,6 +16,9 @@
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
+load_module duration
+
+
 # keep_n <n>
 #
 # Keep the last n snapshots
@@ -36,7 +39,32 @@ zfshotter::prune_policy::keep_regex() {
         read timestamp snapshot <<< "$line"
 
         if ! echo "${snapshot##*@}" | grep -qP "$regex"; then
-            printf "%s\t%s\n" "$timestamp" "$snapshot"
+            echo "$line"
+        fi
+    done
+}
+
+# keep_for <duration>
+#
+# Keep snapshots whitin specified duration
+zfshotter::prune_policy::keep_for() {
+    local keep_seconds="$(duration::parse "$1")"
+    if [ $? -ne 0 ]; then
+        logging::error "Invalid duration: '$1'"
+        return 1
+    fi
+
+    local now="$(date +"%s")"
+    local keep_date=$(( now - keep_seconds ))
+
+    local line
+    local timestamp snapshot
+    while IFS= read -r line
+    do
+        read timestamp snapshot <<< "$line"
+
+        if [ $timestamp -lt $keep_date ]; then
+            echo "$line"
         fi
     done
 }
