@@ -88,15 +88,31 @@ ZFSHOTTER_ROOT="$(dirname "$SCRIPT_DIR")"
 
 source "$ZFSHOTTER_ROOT/lib/module_loader.sh"
 
+load_module config_loader
 load_module logging
+load_module zfshotter
+
+
+config::load_job_config "$JOB_NAME" && \
+    SNAPSHOT_DATASETS_PATH="$(config::datasets_path "$SNAPSHOT_DATASETS")" && \
+    PRUNE_DATASETS_PATH="$(config::datasets_path "$PRUNE_DATASETS")" && \
+    REPLICATE_DATASETS_PATH="$(config::datasets_path "$REPLICATE_DATASETS")" || exit 1
 
 
 logging::info "Started job $JOB_NAME"
 
-# TODO: Taking snapshots
 
-# TODO: Pruning snapshots
+logging::info "Started taking snapshots"
+zfshotter::take_snapshot_from_file "$SNAPSHOT_DATASETS_PATH"
+logging::info "Finished taking snapshots"
+
+
+logging::info "Started pruning snapshots"
+zfshotter::prune_snapshot_from_file "$PRUNE_DATASETS_PATH" "$PRUNE_POLICY"
+logging::info "Finished pruning snapshots"
+
 
 # TODO: Replicating snapshots
+#
 
 logging::info "Finished job $JOB_NAME"
