@@ -19,7 +19,7 @@ load_module dataset_config
 load_module logging
 
 
-ZSHOTTER_SNAPSHOT_FORMAT="zshotter-%Y%m%d-%H%M%S"
+ZFSHOTTER_SNAPSHOT_FORMAT="zfshotter-%Y%m%d-%H%M%S"
 
 # zfshotter::take_snapshot <dataset> <snapshot-name> <options>
 zfshotter::take_snapshot() {
@@ -42,7 +42,7 @@ zfshotter::take_snapshot() {
 # zfshotter::take_snapshot_from_file <filepath> <snapshot-format>
 zfshotter::take_snapshot_from_file() {
     local filepath="$1"
-    local snapshot_format="${2:-$ZSHOTTER_SNAPSHOT_FORMAT}"
+    local snapshot_format="${2:-$ZFSHOTTER_SNAPSHOT_FORMAT}"
 
     local -a datasets
     mapfile -t datasets < "$filepath"
