@@ -93,9 +93,18 @@ load_module logging
 load_module zfshotter
 
 
+_check_replication_configs() {
+    local replication
+    for replication in "$@"
+    do
+        config::replication_path "$replication"
+    done
+}
+
 config::load_job_config "$JOB_NAME" && \
     SNAPSHOT_DATASETS_PATH="$(config::datasets_path "$SNAPSHOT_DATASETS")" && \
-    PRUNE_DATASETS_PATH="$(config::datasets_path "$PRUNE_DATASETS")" || exit 1
+    PRUNE_DATASETS_PATH="$(config::datasets_path "$PRUNE_DATASETS")" && \
+    _check_replication_configs "${REPLICATIONS[@]}" || exit 1
 
 
 logging::info "Started job $JOB_NAME"
