@@ -40,7 +40,7 @@ zfshotter::replicate() {
         __remote_ssh zfs create -p "$(dirname "$remote_dataset")"
 
         local destination="$remote_dataset@$last_local_snapshot_name"
-        if zfs send -R "$last_local_snapshot" | __remote_ssh zfs recv "$destination"; then
+        if zfs send "$last_local_snapshot" | __remote_ssh zfs recv "$destination"; then
             logging::info "Successfully sent initial snapshot '$last_local_snapshot' to '$destination'."
         else
             logging::error "Failed to send initial snapshot '$last_local_snapshot' to '$destination'."
