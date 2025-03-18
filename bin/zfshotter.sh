@@ -95,8 +95,7 @@ load_module zfshotter
 
 config::load_job_config "$JOB_NAME" && \
     SNAPSHOT_DATASETS_PATH="$(config::datasets_path "$SNAPSHOT_DATASETS")" && \
-    PRUNE_DATASETS_PATH="$(config::datasets_path "$PRUNE_DATASETS")" && \
-    REPLICATE_DATASETS_PATH="$(config::datasets_path "$REPLICATE_DATASETS")" || exit 1
+    PRUNE_DATASETS_PATH="$(config::datasets_path "$PRUNE_DATASETS")" || exit 1
 
 
 logging::info "Started job $JOB_NAME"
@@ -112,7 +111,14 @@ zfshotter::prune_snapshot_from_file "$PRUNE_DATASETS_PATH" "$PRUNE_POLICY"
 logging::info "Finished pruning snapshots"
 
 
-# TODO: Replicating snapshots
-#
+logging::info "Started replicating snapshots"
+for replication in "${REPLICATIONS[@]}"
+do
+    logging::info "Started replication: '$replication'"
+    zfshotter::replicate_from_replication_config "$replication"
+    logging::info "Finished replication: '$replication'"
+done
+logging::info "Finished replicating snapshots"
+
 
 logging::info "Finished job $JOB_NAME"
