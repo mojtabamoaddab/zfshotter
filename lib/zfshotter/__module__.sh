@@ -17,3 +17,4 @@
 
 load_module ./snapshot
 load_module ./prune
+load_module ./replicate

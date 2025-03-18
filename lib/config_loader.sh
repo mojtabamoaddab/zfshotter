@@ -23,6 +23,7 @@ ZFSHOTTER_ROOT_DIR="$(dirname "$MODULES_DIR")"
 ZFSHOTTER_CONFIG_DIR="$ZFSHOTTER_ROOT_DIR/config"
 ZFSHOTTER_JOBS_DIR="$ZFSHOTTER_CONFIG_DIR/jobs"
 ZFSHOTTER_DATASETS_DIR="$ZFSHOTTER_CONFIG_DIR/datasets"
+ZFSHOTTER_REPLICATIONS_DIR="$ZFSHOTTER_CONFIG_DIR/replications"
 
 DEFAULT_DATASETS="default"
 DEFAULT_PRUNE_POLICY='keep_regex "^(?!zfshotter-)" | keep_n 25'
@@ -37,14 +38,13 @@ config::load_job_config() {
     fi
     logging::info "Loading job configuration for '$job_name' from '$job_path'."
 
-    unset DATASETS SNAPSHOT_DATASETS PRUNE_DATASETS REPLICATE_DATASETS PRUNE_POLICY
+    unset DATASETS SNAPSHOT_DATASETS PRUNE_DATASETS REPLICATIONS PRUNE_POLICY
 
     source "$job_path"
 
     : ${DATASETS:=$DEFAULT_DATASETS}
     : ${SNAPSHOT_DATASETS:=$DATASETS}
     : ${PRUNE_DATASETS:=$DATASETS}
-    : ${REPLICATE_DATASETS:=$DATASETS}
     : ${PRUNE_POLICY:=$DEFAULT_PRUNE_POLICY}
 }
 
@@ -53,9 +53,33 @@ config::datasets_path() {
     local datasets_name="$1"
     local datasets_path="$ZFSHOTTER_DATASETS_DIR/$datasets_name.conf"
     if [ ! -f "$datasets_path" ]; then
-        echo "Datasets configuration file '$datasets_path' for datasets '$datasets_name' does not exist."
+        logging::fatal "Datasets configuration file '$datasets_path' for datasets '$datasets_name' does not exist."
         return 1
     fi
     logging::info "Datasets configuration found at '$datasets_path'."
     echo "$datasets_path"
+}
+
+# config::replication_path <replication-name>
+config::replication_path() {
+    local replication_name="$1"
+    local replication_path="$ZFSHOTTER_REPLICATIONS_DIR/$replication_name.conf"
+    if [ ! -f "$replication_path" ]; then
+        logging::fatal "Replication configuration file '$replication_path' for replication '$replication_name' does not exist."
+        return 1
+    fi
+    logging::info "Replication configuration found at '$replication_path'."
+    echo "$replication_path"
+}
+
+# config::load_replication_config <replication-name>
+config::load_replication_config() {
+    local replication_name="$1"
+    local replication_path="$ZFSHOTTER_REPLICATIONS_DIR/$replication_name.conf"
+
+    logging::info "Loading replication configuration for '$replication_name' from '$replication_path'."
+
+    unset REMOTE_SSH_ADDRESS REPLICATION_DATASETS DATASET_PREFIX_TO_REMOVE REMOTE_DATASET_PREFIX
+
+    source "$replication_path"
 }
