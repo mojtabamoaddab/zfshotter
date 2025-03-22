@@ -68,6 +68,14 @@ and then replicating them.
 
 You can see `config/jobs/sample.conf` to possible configuration options.
 
+Supported prune-policies (can be combined with `|`):
+
+| Prune Policy          | Description                              | Example                |
+|-----------------------|------------------------------------------|------------------------|
+| `keep_for <duration>` | Keep snapshots within specified duration | `keep_for 4d12h`       |
+| `keep_n <n>`          | Keep the last n snapshots                | `keep_n 20`            |
+| `keep_regex <regex>`  | Keep snapshots that match the specified regex pattern in their name | `keep_regex "^manual"` |
+
 
 ### Datasets
 
