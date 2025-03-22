@@ -19,6 +19,14 @@
 load_module duration
 
 
+# keep_all
+#
+# Keep all snapshots (no prune)
+zfshotter::prune_policy::keep_all() {
+    :
+}
+
+
 # keep_n <n>
 #
 # Keep the last n snapshots
