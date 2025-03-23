@@ -72,9 +72,11 @@ Supported prune-policies (can be combined with `|`):
 
 | Prune Policy          | Description                              | Example                |
 |-----------------------|------------------------------------------|------------------------|
+| `keep_all`            | Keep all snapshots (no prune)            |                        |
 | `keep_for <duration>` | Keep snapshots within specified duration | `keep_for 4d12h`       |
 | `keep_n <n>`          | Keep the last n snapshots                | `keep_n 20`            |
 | `keep_regex <regex>`  | Keep snapshots that match the specified regex pattern in their name | `keep_regex "^manual"` |
+| `keep_time_pattern <time-format> <regex>` | Keep snapshots whose creation time (formatted as specified) matches the given regex | `keep_time_pattern "%H" "00"` |
 
 
 ### Datasets
