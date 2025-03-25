@@ -111,7 +111,7 @@ logging::info "Started job $JOB_NAME"
 
 
 logging::info "Started taking snapshots"
-zfshotter::take_snapshot_from_file "$SNAPSHOT_DATASETS_PATH"
+zfshotter::take_snapshot_from_file "$SNAPSHOT_DATASETS_PATH" "$SNAPSHOT_FORMAT"
 logging::info "Finished taking snapshots"
 
 
