@@ -97,7 +97,7 @@ _check_replication_configs() {
     local replication
     for replication in "$@"
     do
-        config::replication_path "$replication"
+        config::replication_path "$replication" &> /dev/null
     done
 }
 
