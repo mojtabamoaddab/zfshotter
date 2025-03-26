@@ -91,6 +91,7 @@ source "$ZFSHOTTER_ROOT/lib/module_loader.sh"
 load_module config_loader
 load_module logging
 load_module zfshotter
+load_module utils
 
 
 _check_replication_configs() {
@@ -116,7 +117,11 @@ logging::info "Finished taking snapshots"
 
 
 logging::info "Started pruning snapshots"
-zfshotter::prune_snapshot_from_file "$PRUNE_DATASETS_PATH" "$PRUNE_POLICY"
+if utils::is_array PRUNE_POLICY; then
+    zfshotter::prune_snapshot_from_file "$PRUNE_DATASETS_PATH" "${PRUNE_POLICY[@]}"
+else
+    zfshotter::prune_snapshot_from_file "$PRUNE_DATASETS_PATH" "$PRUNE_POLICY"
+fi
 logging::info "Finished pruning snapshots"
 
 
