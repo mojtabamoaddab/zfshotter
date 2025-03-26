@@ -29,7 +29,7 @@ zfshotter::take_snapshot() {
 
     local zfs_options=""
     local log_message="Taking snapshot from $dataset"
-    if boolean_option "${__options["recursive"]}"; then
+    if dataset_config::boolean "${__options["recursive"]}"; then
         zfs_options+=" -r"
         log_message+=" (recursive)"
     fi

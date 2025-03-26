@@ -29,7 +29,7 @@ zfshotter::prune_policy::pipe() {
 
     local -a policies
     mapfile -t policies <<< "$(echo "$prune_policy" | awk '{
-        gsub(" +\| +", "\n");
+        gsub(" +\\| +", "\n");
         print;
     }')"
 
