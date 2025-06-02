@@ -19,6 +19,13 @@
 load_module duration
 
 
+# keep_all
+#
+# Keep all snapshots (no prune)
+zfshotter::prune_policy::keep_all() {
+    :
+}
+
 # keep_n <n>
 #
 # Keep the last n snapshots
@@ -64,6 +71,25 @@ zfshotter::prune_policy::keep_for() {
         read timestamp snapshot <<< "$line"
 
         if [ $timestamp -lt $keep_date ]; then
+            echo "$line"
+        fi
+    done
+}
+
+# keep_time_pattern <time-format> <regex>
+#
+# Keep snapshots whose creation time (formatted as specified) matches the given regex
+zfshotter::prune_policy::keep_time_pattern() {
+    local time_format="$1"
+    local regex="$2"
+
+    local line
+    local timestamp snapshot
+    while IFS= read -r line
+    do
+        read timestamp snapshot <<< "$line"
+
+        if ! date -d "@$timestamp" +"$time_format" | grep -qP "$regex"; then
             echo "$line"
         fi
     done

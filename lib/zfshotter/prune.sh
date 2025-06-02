@@ -21,8 +21,18 @@ load_module logging
 load_module ./prune_policy
 
 
-__snapshots() {
+zfshotter::__list_snapshots() {
     zfs list -H -p -o creation,name -s creation -t snapshot "$1"
+}
+
+zfshotter::__multi_purne_policy_pipe() {
+    local snapshots="$(cat)"
+
+    local prune_policy
+    for prune_policy in "$@"
+    do
+        echo "$snapshots" | zfshotter::prune_policy::pipe "$prune_policy"
+    done | sort | uniq
 }
 
 # zfshotter::destroy_snapshots
@@ -38,21 +48,21 @@ zfshotter::destroy_snapshots() {
     done
 }
 
-# zfshotter::prune_snapshot <dataset> <prune-policy> <options>
+# zfshotter::prune_snapshot <dataset> <options> <prune-policy>...
 zfshotter::prune_snapshot() {
     local dataset="$1"
-    local prune_policy="$2"
-    local -n __options="$3"
+    local -n __options="$2"
+    local prune_policies=("${@:3}")
 
-    __snapshots "$dataset" | \
-        zfshotter::prune_policy::pipe "$prune_policy" | \
+    zfshotter::__list_snapshots "$dataset" | \
+        zfshotter::__multi_purne_policy_pipe "${prune_policies[@]}" | \
         zfshotter::destroy_snapshots
 }
 
-# zfshotter::prune_snapshot_from_file <filepath> <prune-policy>
+# zfshotter::prune_snapshot_from_file <filepath> <prune-policy>...
 zfshotter::prune_snapshot_from_file() {
     local filepath="$1"
-    local prune_policy="$2"
+    local prune_policies=("${@:2}")
 
     local -a datasets
     mapfile -t datasets < "$filepath"
@@ -71,7 +81,7 @@ zfshotter::prune_snapshot_from_file() {
             continue
         fi
 
-        zfshotter::prune_snapshot "$dataset_config" "$prune_policy" options
+        zfshotter::prune_snapshot "$dataset_config" options "${prune_policies[@]}"
 
         unset options
     done
