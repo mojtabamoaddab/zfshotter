@@ -81,7 +81,7 @@ zfshotter::prune_snapshot_from_file() {
             continue
         fi
 
-        zfshotter::prune_snapshot "$dataset_config" options "${prune_policies[@]}"
+        zfshotter::prune_snapshot "$dataset" options "${prune_policies[@]}"
 
         unset options
     done
