@@ -100,4 +100,4 @@ You can see `config/replications/sample.conf` to possible configuration options.
 ## License
 
 This project is licensed under the GPL-3.0-or-later License -
-see the `LICENSE` file for details.
+see the `COPYING` file for details.
