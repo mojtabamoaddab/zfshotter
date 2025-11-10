@@ -23,6 +23,22 @@ __remote_ssh() {
     ssh $SSH_OPTIONS "$REMOTE_SSH_ADDRESS" "$@"
 }
 
+__dataset_remove_prefix() {
+    local dataset="$1"
+    local prefix="$2"
+
+    [[ "$dataset" == "$prefix" ]] && return
+
+    echo "${dataset#$prefix/}"
+}
+
+__dataset_add_prefix() {
+    local prefix="$1"
+    local dataset="$2"
+
+    echo "$prefix${dataset:+/}$dataset"
+}
+
 # zfshotter::replicate <dataset> <remote-dataset>
 zfshotter::replicate() {
     local dataset="$1"
@@ -80,10 +96,10 @@ zfshotter::replicate_from_replication_config() {
             continue
         fi
 
-        remote_dataset="${dataset#$LOCAL_DATASET_PREFIX_TO_REMOVE/}"
+        remote_dataset="$(__dataset_remove_prefix "$dataset" "$LOCAL_DATASET_PREFIX_TO_REMOVE")"
 
         if [ -n "$REMOTE_DATASET_PREFIX" ]; then
-            remote_dataset="$REMOTE_DATASET_PREFIX/$remote_dataset"
+            remote_dataset="$(__dataset_add_prefix "$REMOTE_DATASET_PREFIX" "$remote_dataset")"
         fi
 
         zfshotter::replicate "$dataset" "$remote_dataset"
