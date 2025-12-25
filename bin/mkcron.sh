@@ -40,7 +40,7 @@ cat > "$CRON_FILE" << EOF
 
 EOF
 
-for job in "$ZFSHOTTER_JOBS_DIR/*.conf"
+for job in "$ZFSHOTTER_JOBS_DIR"/*.conf
 do
     "$SCRIPT_DIR/internal/cron.sh" "$job" >> "$CRON_FILE"
 done
