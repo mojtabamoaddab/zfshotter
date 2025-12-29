@@ -47,4 +47,6 @@ dataset_config::parse() {
     done
 }
 
-alias dataset_config::boolean=utils::boolean
+dataset_config::boolean() {
+    utils::boolean "$@"
+}
