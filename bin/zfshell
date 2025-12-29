@@ -57,15 +57,15 @@ DATASET="$2"
 
 case "$COMMAND" in
     last-snapshot)
-        zfshell:authorize "list" "$DATASET" "$ACL" || fatal "Forbidden"
+        zfshell::authorize "list" "$DATASET" "$ACL" || fatal "Forbidden"
         zfs list -H -o name -t snapshot "$DATASET" | tail -n 1
         ;;
     create)
-        zfshell:authorize "create" "$DATASET" "$ACL" || fatal "Forbidden"
+        zfshell::authorize "create" "$DATASET" "$ACL" || fatal "Forbidden"
         zfs create -p "$DATASET"
         ;;
     receive)
-        zfshell:authorize "receive" "$DATASET" "$ACL" || fatal "Forbidden"
+        zfshell::authorize "receive" "$DATASET" "$ACL" || fatal "Forbidden"
         zfs receive "$DATASET"
         ;;
     *)
