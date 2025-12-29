@@ -45,7 +45,7 @@ if utils::boolean "$ZFSHELL_TOKEN_AUTHORIZATION"; then
 
     ACL="$(zfshell::get_acl_from_token "$TOKEN")"
 else
-    alias zfshell::authorize=true
+    zfshell::authorize() { :; }
 fi
 
 set -- "${ARGS[@]}"

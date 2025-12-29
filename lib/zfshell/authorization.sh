@@ -43,8 +43,13 @@ __filter_acl_rules() {
     echo "$acl" | jq -c ".[] | select(.actions | index(\"$action\"))"
 }
 
-alias zfshell::validate_token=jwt::validate
-alias zfshell::get_acl_from_token=jwt::decode
+zfshell::validate_token() {
+    jwt::validate "$@"
+}
+
+zfshell::get_acl_from_token() {
+    jwt::decode "$@"
+}
 
 # zfshell::authorize <action> <dataset> <acl>
 zfshell::authorize() {
