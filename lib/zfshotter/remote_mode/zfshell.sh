@@ -16,14 +16,23 @@
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
+__zfshell_ssh() {
+    local -a OPTS
+    if [[ -n "$ZFSHELL_TOKEN" ]]; then
+        OPTS+=("--token" "$ZFSHELL_TOKEN")
+    fi
+
+    remote::ssh "$@" "${OPTS[@]}"
+}
+
 remote::zfshell::last_snapshot() {
-    remote::ssh last-snapshot "$1" 2>&1
+    __zfshell_ssh last-snapshot "$1" 2>&1
 }
 
 remote::zfshell::receive() {
-    remote::ssh receive "$1"
+    __zfshell_ssh receive "$1"
 }
 
 remote::zfshell::create() {
-    remote::ssh create "$1"
+    __zfshell_ssh create "$1"
 }
