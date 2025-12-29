@@ -21,7 +21,7 @@ jwt::base64() {
 }
 
 jwt::base64_decode() {
-    tr "-_" "+/" | base64 -d
+    tr -- "-_" "+/" | base64 -d
 }
 
 jwt::hmac() {
