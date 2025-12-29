@@ -44,6 +44,7 @@ __filter_acl_rules() {
 }
 
 alias zfshell::validate_token=jwt::validate
+alias zfshell::get_acl_from_token=jwt::decode
 
 # zfshell::authorize <action> <dataset> <acl>
 zfshell::authorize() {
