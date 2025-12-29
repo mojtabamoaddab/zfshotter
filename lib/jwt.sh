@@ -17,7 +17,7 @@
 
 
 jwt::base64() {
-    base64 | tr "+/" "-_" | tr -d "="
+    base64 | tr "+/" "-_" | tr -d "=\n"
 }
 
 jwt::base64_decode() {
