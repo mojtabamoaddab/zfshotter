@@ -15,36 +15,5 @@
 # You should have received a copy of the GNU General Public License
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
-
-utils::is_array() {
-    if declare -p "$1" &> /dev/null &&
-        [[ "$(declare -p "$1")" == "declare -a "* ]]; then
-        return 0
-    fi
-
-    return 1
-}
-
-# utils::boolean <option> [<default-value>]
-utils::boolean() {
-    local default_value="${2:-false}"
-    local option="${1:-$default_value}"
-
-
-    case "${option,,}" in
-        1 | y | yes | \
-        t | true)
-            return 0;
-            ;;
-
-        0 | n | no | \
-        f | false)
-            return 1;
-            ;;
-
-        *)
-            return 2;
-            ;;
-
-    esac
-}
+load_module ./args
+load_module ./authorization

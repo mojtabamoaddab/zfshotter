@@ -17,6 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ZFSHOTTER_ROOT="$(dirname "$SCRIPT_DIR")"
+
+source "$ZFSHOTTER_ROOT/lib/module_loader.sh"
+
+load_module utils
+
+
 fatal() {
     echo "$@" >&2
     exit 1
@@ -27,6 +35,19 @@ if [[ -z "${SSH_ORIGINAL_COMMAND}" ]]; then
 fi
 
 ARGS=(${SSH_ORIGINAL_COMMAND})
+
+if utils::boolean "$ZFSHELL_TOKEN_AUTHORIZATION"; then
+    load_module zfshell
+
+    TOKEN="$(zfshell::get_token_from_args ARGS)"
+
+    zfshell::validate_token "$TOKEN" "$ZFSHELL_SECRET" || fatal "Unauthorized"
+
+    ACL="$(zfshell::get_acl_from_token "$TOKEN")"
+else
+    alias zfshell::authorize=true
+fi
+
 set -- "${ARGS[@]}"
 
 COMMAND="$1"
@@ -36,12 +57,15 @@ DATASET="$2"
 
 case "$COMMAND" in
     last-snapshot)
+        zfshell:authorize "list" "$DATASET" "$ACL" || fatal "Forbidden"
         zfs list -H -o name -t snapshot "$DATASET" | tail -n 1
         ;;
     create)
+        zfshell:authorize "create" "$DATASET" "$ACL" || fatal "Forbidden"
         zfs create -p "$DATASET"
         ;;
     receive)
+        zfshell:authorize "receive" "$DATASET" "$ACL" || fatal "Forbidden"
         zfs receive "$DATASET"
         ;;
     *)
