@@ -18,9 +18,19 @@
 load_module config_loader
 load_module logging
 
+load_module ./remote_mode
 
-__remote_ssh() {
-    ssh $SSH_OPTIONS "$REMOTE_SSH_ADDRESS" "$@"
+
+__remote_last_snapshot() {
+    remote::"$REMOTE_MODE"::last_snapshot "$1"
+}
+
+__remote_receive() {
+    remote::"$REMOTE_MODE"::receive "$1"
+}
+
+__remote_create() {
+    remote::"$REMOTE_MODE"::create "$1"
 }
 
 __dataset_remove_prefix() {
@@ -45,7 +55,7 @@ zfshotter::replicate() {
     local remote_dataset="$2"
 
     local last_local_snapshot="$(zfs list -H -o name -t snapshot "${dataset}" | tail -n 1)"
-    local last_remote_snapshot="$(__remote_ssh "zfs list -H -o name -t snapshot ${remote_dataset} | tail -n 1" 2>&1)"
+    local last_remote_snapshot="$(__remote_last_snapshot "${remote_dataset}")"
 
     local last_local_snapshot_name="${last_local_snapshot##*@}"
     local last_remote_snapshot_name="${last_remote_snapshot##*@}"
@@ -53,10 +63,10 @@ zfshotter::replicate() {
     if [[ "${last_remote_snapshot}" == "cannot open '"*"': dataset does not exist" ]]; then
         logging::info "Initial snapshot transfer: Sending snapshot '$last_local_snapshot_name' from local dataset '$dataset' to remote dataset '$remote_dataset'."
 
-        __remote_ssh zfs create -p "$(dirname "$remote_dataset")"
+        __remote_create "$(dirname "$remote_dataset")"
 
         local destination="$remote_dataset@$last_local_snapshot_name"
-        if zfs send "$last_local_snapshot" | __remote_ssh zfs recv "$destination"; then
+        if zfs send "$last_local_snapshot" | __remote_receive "$destination"; then
             logging::info "Successfully sent initial snapshot '$last_local_snapshot' to '$destination'."
         else
             logging::error "Failed to send initial snapshot '$last_local_snapshot' to '$destination'."
@@ -64,7 +74,7 @@ zfshotter::replicate() {
     else
         logging::info "Incremental snapshot transfer: Sending incremental snapshot from local dataset '$dataset' (last local: '$last_local_snapshot_name', last remote: '$last_remote_snapshot_name') to remote dataset '$remote_dataset'."
 
-        if zfs send -R -I "$last_remote_snapshot_name" "$last_local_snapshot" | __remote_ssh zfs recv "$remote_dataset"; then
+        if zfs send -R -I "$last_remote_snapshot_name" "$last_local_snapshot" | __remote_receive "$remote_dataset"; then
             logging::info "Successfully sent incremental snapshot '$last_local_snapshot' to remote dataset '$remote_dataset' (after '$last_remote_snapshot_name')."
         else
             logging::error "Failed to send incremental snapshot '$last_local_snapshot' to remote dataset '$remote_dataset' (after '$last_remote_snapshot_name')."

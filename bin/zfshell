@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2025 Mojtaba Moaddab
+#
+# This file is part of ZFShotter.
+#
+# ZFShotter is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# ZFShotter is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
+
+fatal() {
+    echo "$@" >&2
+    exit 1
+}
+
+if [[ -z "${SSH_ORIGINAL_COMMAND}" ]]; then
+    fatal "Authentication successful, but shell access is not provided by zfshell."
+fi
+
+ARGS=(${SSH_ORIGINAL_COMMAND})
+set -- "${ARGS[@]}"
+
+COMMAND="$1"
+DATASET="$2"
+
+[[ -n "$DATASET" ]] || fatal "Command '$COMMAND' requires a dataset as an argument."
+
+case "$COMMAND" in
+    last-snapshot)
+        zfs list -H -o name -t snapshot "$DATASET" | tail -n 1
+        ;;
+    create)
+        zfs create -p "$DATASET"
+        ;;
+    receive)
+        zfs receive "$DATASET"
+        ;;
+    *)
+        fatal "Invalid command '$COMMAND'."
+        ;;
+esac
