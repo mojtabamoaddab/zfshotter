@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
+load_module utils
+
 
 __trim_space_pipe() {
     sed -r -e "s/^[[:blank:]]+//" -e "s/[[:blank:]]+$//"
@@ -45,26 +47,6 @@ dataset_config::parse() {
     done
 }
 
-# dataset_config::boolean <option> [<default-value>]
 dataset_config::boolean() {
-    local default_value="${2:-false}"
-    local option="${1:-$default_value}"
-
-
-    case "${option,,}" in
-        1 | y | yes | \
-        t | true)
-            return 0;
-            ;;
-
-        0 | n | no | \
-        f | false)
-            return 1;
-            ;;
-
-        *)
-            return 2;
-            ;;
-
-    esac
+    utils::boolean "$@"
 }
