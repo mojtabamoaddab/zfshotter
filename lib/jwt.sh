@@ -16,12 +16,20 @@
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
+__base64_padding() {
+    case "$(( ${#1} % 4 ))" in
+        2) echo -n "$1==" ;;
+        3) echo -n "$1=" ;;
+        1) return 1 ;;
+    esac
+}
+
 jwt::base64() {
     base64 | tr "+/" "-_" | tr -d "=\n"
 }
 
 jwt::base64_decode() {
-    tr -- "-_" "+/" | base64 -d
+    __base64_padding "$(cat - | tr -- "-_" "+/")" | base64 -d
 }
 
 jwt::hmac() {
