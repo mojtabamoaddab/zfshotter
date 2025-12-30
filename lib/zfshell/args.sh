@@ -16,23 +16,26 @@
 # along with ZFShotter. If not, see <http://www.gnu.org/licenses/>.
 
 
-__zfshell_ssh() {
-    local -a OPTS
-    if [[ -n "$ZFSHELL_TOKEN" ]]; then
-        OPTS+=("--token" "$ZFSHELL_TOKEN")
-    fi
+zfshell::get_token_from_args() {
+    local -n args="$1"
+    local -a new_args
 
-    remote::ssh "$@" "${OPTS[@]}"
-}
+    local i=0
+    while [[ "$i" -lt "${#args[@]}" ]]; do
+        local arg="${args[$i]}"
+        case "$arg" in
+            --token)
+                ((i++))
+                local token="${args[$i]}"
+                ;;
+            *)
+                new_args+=("$arg")
+                ;;
+        esac
+        ((i++))
+    done
 
-remote::zfshell::last_snapshot() {
-    __zfshell_ssh last-snapshot "$1" 2>&1
-}
+    args=("${new_args[@]}")
 
-remote::zfshell::receive() {
-    __zfshell_ssh receive "$1"
-}
-
-remote::zfshell::create() {
-    __zfshell_ssh create "$1"
+    echo "$token"
 }
