@@ -18,8 +18,9 @@
 
 __base64_padding() {
     case "$(( ${#1} % 4 ))" in
-        2) echo -n "$1==" ;;
+        0) echo -n "$1" ;;
         3) echo -n "$1=" ;;
+        2) echo -n "$1==" ;;
         1) return 1 ;;
     esac
 }
