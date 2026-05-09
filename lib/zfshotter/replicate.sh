@@ -49,6 +49,10 @@ __dataset_add_prefix() {
     echo "$prefix${dataset:+/}$dataset"
 }
 
+__zfs_send() {
+    zfs send "${ZFS_SEND_OPTS[@]}" "$@"
+}
+
 # zfshotter::replicate <dataset> <remote-dataset>
 zfshotter::replicate() {
     local dataset="$1"
@@ -66,7 +70,7 @@ zfshotter::replicate() {
         __remote_create "$(dirname "$remote_dataset")"
 
         local destination="$remote_dataset@$last_local_snapshot_name"
-        if zfs send "$last_local_snapshot" | __remote_receive "$destination"; then
+        if __zfs_send "$last_local_snapshot" | __remote_receive "$destination"; then
             logging::info "Successfully sent initial snapshot '$last_local_snapshot' to '$destination'."
         else
             logging::error "Failed to send initial snapshot '$last_local_snapshot' to '$destination'."
@@ -74,7 +78,7 @@ zfshotter::replicate() {
     else
         logging::info "Incremental snapshot transfer: Sending incremental snapshot from local dataset '$dataset' (last local: '$last_local_snapshot_name', last remote: '$last_remote_snapshot_name') to remote dataset '$remote_dataset'."
 
-        if zfs send -R -I "$last_remote_snapshot_name" "$last_local_snapshot" | __remote_receive "$remote_dataset"; then
+        if __zfs_send -R -I "$last_remote_snapshot_name" "$last_local_snapshot" | __remote_receive "$remote_dataset"; then
             logging::info "Successfully sent incremental snapshot '$last_local_snapshot' to remote dataset '$remote_dataset' (after '$last_remote_snapshot_name')."
         else
             logging::error "Failed to send incremental snapshot '$last_local_snapshot' to remote dataset '$remote_dataset' (after '$last_remote_snapshot_name')."

@@ -79,7 +79,7 @@ config::load_replication_config() {
 
     logging::info "Loading replication configuration for '$replication_name' from '$replication_path'."
 
-    unset REMOTE_SSH_ADDRESS REMOTE_MODE REPLICATION_DATASETS DATASET_PREFIX_TO_REMOVE REMOTE_DATASET_PREFIX
+    unset REMOTE_SSH_ADDRESS REMOTE_MODE REPLICATION_DATASETS DATASET_PREFIX_TO_REMOVE REMOTE_DATASET_PREFIX ZFS_SEND_OPTS
 
     source "$replication_path"
 
